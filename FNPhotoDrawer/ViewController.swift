@@ -9,10 +9,13 @@
 import UIKit
 
 class ViewController: UIViewController {
-
+    var albumArray:NSArray! = []
+    var photoArray:NSMutableArray! = []
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do any additional setup after loading the view, typically from a nib.
+        
+        let photoDrawer = FNPhotoDrawer.init(frame: CGRectMake(0, view.bounds.height - 400, view.frame.size.width, 400))
+        view.addSubview(photoDrawer)
     }
 
     override func didReceiveMemoryWarning() {

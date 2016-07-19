@@ -12,6 +12,9 @@
 		1010DCFC1D3D1DE8003D2719 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 1010DCFA1D3D1DE8003D2719 /* Main.storyboard */; };
 		1010DCFE1D3D1DE8003D2719 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1010DCFD1D3D1DE8003D2719 /* Assets.xcassets */; };
 		1010DD011D3D1DE8003D2719 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 1010DCFF1D3D1DE8003D2719 /* LaunchScreen.storyboard */; };
+		1010DD0A1D3D1F38003D2719 /* FNPDPhotoFetcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1010DD091D3D1F38003D2719 /* FNPDPhotoFetcher.swift */; };
+		1010DD0C1D3D3146003D2719 /* FNPhotoDrawer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1010DD0B1D3D3146003D2719 /* FNPhotoDrawer.swift */; };
+		10E65F881D3DE8D9003922EF /* FNPDPhotoCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 10E65F871D3DE8D9003922EF /* FNPDPhotoCell.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -22,6 +25,9 @@
 		1010DCFD1D3D1DE8003D2719 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		1010DD001D3D1DE8003D2719 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		1010DD021D3D1DE8003D2719 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		1010DD091D3D1F38003D2719 /* FNPDPhotoFetcher.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FNPDPhotoFetcher.swift; sourceTree = "<group>"; };
+		1010DD0B1D3D3146003D2719 /* FNPhotoDrawer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FNPhotoDrawer.swift; sourceTree = "<group>"; };
+		10E65F871D3DE8D9003922EF /* FNPDPhotoCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FNPDPhotoCell.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -54,12 +60,23 @@
 		1010DCF51D3D1DE8003D2719 /* FNPhotoDrawer */ = {
 			isa = PBXGroup;
 			children = (
+				1010DD081D3D1EB7003D2719 /* FNPhotoDrawer */,
 				1010DCF61D3D1DE8003D2719 /* AppDelegate.swift */,
 				1010DCF81D3D1DE8003D2719 /* ViewController.swift */,
 				1010DCFA1D3D1DE8003D2719 /* Main.storyboard */,
 				1010DCFD1D3D1DE8003D2719 /* Assets.xcassets */,
 				1010DCFF1D3D1DE8003D2719 /* LaunchScreen.storyboard */,
 				1010DD021D3D1DE8003D2719 /* Info.plist */,
+			);
+			path = FNPhotoDrawer;
+			sourceTree = "<group>";
+		};
+		1010DD081D3D1EB7003D2719 /* FNPhotoDrawer */ = {
+			isa = PBXGroup;
+			children = (
+				1010DD091D3D1F38003D2719 /* FNPDPhotoFetcher.swift */,
+				10E65F871D3DE8D9003922EF /* FNPDPhotoCell.swift */,
+				1010DD0B1D3D3146003D2719 /* FNPhotoDrawer.swift */,
 			);
 			path = FNPhotoDrawer;
 			sourceTree = "<group>";
@@ -136,7 +153,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				1010DCF91D3D1DE8003D2719 /* ViewController.swift in Sources */,
+				1010DD0C1D3D3146003D2719 /* FNPhotoDrawer.swift in Sources */,
+				10E65F881D3DE8D9003922EF /* FNPDPhotoCell.swift in Sources */,
 				1010DCF71D3D1DE8003D2719 /* AppDelegate.swift in Sources */,
+				1010DD0A1D3D1F38003D2719 /* FNPDPhotoFetcher.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -286,6 +306,7 @@
 				1010DD071D3D1DE8003D2719 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
