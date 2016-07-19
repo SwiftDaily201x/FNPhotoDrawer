@@ -40,7 +40,7 @@ class FNPhotoDrawer: UIView, UICollectionViewDataSource, UICollectionViewDelegat
     
     func initView(frame: CGRect) {
         backgroundColor = UIColor.init(white: 1.0, alpha: 1)
-        layer.shadowColor = UIColor.init(white: 0.85, alpha: 1).CGColor
+        layer.shadowColor = UIColor.init(white: 0.85, alpha: 0.5).CGColor
         layer.shadowOffset = CGSizeMake(0, -4);
         layer.shadowOpacity = 1;
         layer.shadowRadius = 4;
@@ -65,10 +65,20 @@ class FNPhotoDrawer: UIView, UICollectionViewDataSource, UICollectionViewDelegat
             scrollView.addSubview(collectionView)
         }
         
+        let bgView = UIView.init(frame: CGRect.init(x: 0, y: frame.height - 44, width: frame.width, height: 44))
+        bgView.backgroundColor = UIColor.init(white: 1.0, alpha: 1.0)
+        bgView.layer.shadowColor = UIColor.init(white: 0.85, alpha: 0.5).CGColor
+        bgView.layer.shadowOffset = CGSizeMake(0, -4);
+        bgView.layer.shadowOpacity = 1;
+        bgView.layer.shadowRadius = 4;
+        addSubview(bgView)
+        
         albumNameBtn = UIButton.init(frame: CGRect.init(x: 0, y: frame.height - 44, width: frame.width / 3.0, height: 44))
         let collection:PHAssetCollection = albumArray[0] as! PHAssetCollection
-        albumNameBtn.setTitle(collection.localizedTitle.uppercaseString, forState: .Normal)
+        albumNameBtn.setTitle(collection.localizedTitle!.uppercaseString, forState: .Normal)
         albumNameBtn.setTitleColor(UIColor.init(red: 94 / 255.0, green: 99 / 255.0, blue: 106 / 255.0, alpha: 1), forState: .Normal)
+        albumNameBtn.titleLabel!.font = UIFont.init(name: "CourierNewPS-BoldMT", size: 17)
+        albumNameBtn.titleLabel?.adjustsFontSizeToFitWidth
         addSubview(albumNameBtn)
     }
     
@@ -126,5 +136,7 @@ class FNPhotoDrawer: UIView, UICollectionViewDataSource, UICollectionViewDelegat
         let index = (scrollView.contentOffset.x + bounds.width / 2) / bounds.width
         let collection:PHAssetCollection = albumArray[Int(index)] as! PHAssetCollection
         albumNameBtn.setTitle(collection.localizedTitle?.uppercaseString, forState: .Normal)
+        albumNameBtn.titleLabel!.font = UIFont.init(name: "CourierNewPS-BoldMT", size: 17)
+        albumNameBtn.titleLabel?.adjustsFontSizeToFitWidth
     }
 }
