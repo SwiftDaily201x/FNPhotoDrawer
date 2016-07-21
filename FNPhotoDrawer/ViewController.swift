@@ -14,7 +14,7 @@ class ViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        let photoDrawer = FNPhotoDrawer.init(frame: CGRectMake(0, view.bounds.height - 400, view.frame.size.width, 400))
+        let photoDrawer = FNPhotoDrawer.init(frame: CGRectMake(0, view.bounds.height - 440, view.frame.size.width, 440))
         view.addSubview(photoDrawer)
     }
 
