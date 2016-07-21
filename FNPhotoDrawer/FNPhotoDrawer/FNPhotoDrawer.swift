@@ -16,10 +16,11 @@ class FNPhotoDrawer: UIView, UICollectionViewDataSource, UICollectionViewDelegat
     var collectionViewArray:NSMutableArray! = []
     let imageManager: PHCachingImageManager = PHCachingImageManager()
     var albumNameBtn:UIButton!
-    var singleImageViewcontainer:UIView!
-    var singleImageView:UIImageView!
-    var multiImageTopShadow:UIView!
+    var singleImageView:FNPDShadowImageView!
+    var multiImageViewArray:NSMutableArray! = []
+    var storeImageViewArray:NSMutableArray! = []
     var scrollView:UIScrollView!
+    var scrollViewShadow:UIView!
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -44,14 +45,16 @@ class FNPhotoDrawer: UIView, UICollectionViewDataSource, UICollectionViewDelegat
     }
     
     func initView(frame: CGRect) {
+        scrollViewShadow = UIView.init(frame: CGRect.init(x: 0, y: 60, width: bounds.width, height: bounds.height - 44 - 60))
+        scrollViewShadow.backgroundColor = UIColor.init(white: 1.0, alpha: 1)
+        scrollViewShadow.layer.shadowColor = UIColor.init(white: 0.7, alpha: 0.5).CGColor
+        scrollViewShadow.layer.shadowOffset = CGSizeMake(0, 0)
+        scrollViewShadow.layer.shadowOpacity = 1
+        scrollViewShadow.layer.shadowRadius = 8
+        addSubview(scrollViewShadow)
+        
         scrollView = UIScrollView.init(frame: CGRect.init(x: 0, y: 60, width: bounds.width, height: bounds.height - 44 - 60))
         scrollView.contentSize = CGSize.init(width: bounds.width * CGFloat(albumArray.count), height: bounds.height)
-        scrollView.backgroundColor = UIColor.init(white: 1.0, alpha: 1)
-        scrollView.layer.shadowColor = UIColor.init(white: 0.7, alpha: 0.5).CGColor
-        scrollView.layer.shadowOffset = CGSizeMake(0, 0)
-        scrollView.layer.shadowOpacity = 1
-        scrollView.layer.shadowRadius = 8
-        scrollView.clipsToBounds = false
         scrollView.delegate = self
         scrollView.pagingEnabled = true
         addSubview(scrollView)
@@ -60,7 +63,7 @@ class FNPhotoDrawer: UIView, UICollectionViewDataSource, UICollectionViewDelegat
             flowLayout.sectionInset = UIEdgeInsetsMake(5, 5, 5, 5)
             let cellWidth = floor((bounds.width - 8 * 5 - 10) / 5)
             flowLayout.itemSize = CGSize(width: cellWidth, height: cellWidth)
-
+            
             let collectionView = UICollectionView.init(frame: CGRectMake(CGFloat(i) * bounds.width + 5, 5, bounds.width - 10, scrollView.frame.height - 10), collectionViewLayout: flowLayout)
             collectionView.delegate = self
             collectionView.dataSource = self
@@ -70,20 +73,12 @@ class FNPhotoDrawer: UIView, UICollectionViewDataSource, UICollectionViewDelegat
             scrollView.addSubview(collectionView)
         }
         
-        singleImageViewcontainer = UIView.init(frame: CGRect.init(x: (frame.width - 50) / 2, y: frame.height - 44, width: 50, height: 50))
-        singleImageViewcontainer.backgroundColor = UIColor.init(white: 1.0, alpha: 1)
-        singleImageViewcontainer.layer.shadowColor = UIColor.init(white: 0.7, alpha: 1).CGColor
-        singleImageViewcontainer.layer.shadowOffset = CGSizeMake(0, 0);
-        singleImageViewcontainer.layer.shadowOpacity = 1;
-        singleImageViewcontainer.layer.shadowRadius = 10;
-        addSubview(singleImageViewcontainer)
-        singleImageViewcontainer.hidden = true
-        
-        singleImageView = UIImageView.init(frame: CGRect.init(x: 0, y: 0, width: singleImageViewcontainer.frame.width, height: singleImageViewcontainer.frame.height))
-        singleImageView.contentMode = .ScaleAspectFill
-        singleImageView.layer.masksToBounds = true
-        singleImageView.layer.borderColor = UIColor.init(red: 195 / 255.0, green: 222 / 255.0, blue: 234 / 255.0, alpha: 1).CGColor
-        singleImageViewcontainer.addSubview(singleImageView)
+        for _ in 0...6 {
+            let imageView = FNPDShadowImageView.init(frame: CGRect.init(x: (frame.width - 50) / 2, y: frame.height - 44, width: 50, height: 50))
+            addSubview(imageView)
+            imageView.hidden = true
+            storeImageViewArray.addObject(imageView)
+        }
         
         let bgView = UIView.init(frame: CGRect.init(x: 0, y: frame.height - 44, width: frame.width, height: 44))
         bgView.backgroundColor = UIColor.init(white: 1.0, alpha: 1.0)
@@ -141,41 +136,53 @@ class FNPhotoDrawer: UIView, UICollectionViewDataSource, UICollectionViewDelegat
         let asset = fetchResult[indexPath.row] as! PHAsset
         let cell: FNPDPhotoCell = collectionView.cellForItemAtIndexPath(indexPath) as! FNPDPhotoCell
         if selectedAssetArray.containsObject(asset) {
+            let index = selectedAssetArray.indexOfObject(asset)
+            storeImageViewArray.addObject(multiImageViewArray[index])
+            multiImageViewArray.removeObjectAtIndex(0)
             selectedAssetArray.removeObject(asset)
             cell.loadSelectedState(false)
         }
         else {
+            multiImageViewArray.addObject(storeImageViewArray[0])
+            storeImageViewArray.removeObjectAtIndex(0)
             selectedAssetArray.addObject(asset)
             cell.loadSelectedState(true)
         }
         
         if selectedAssetArray.count >= 1 {
-            singleImageViewcontainer.hidden = false
+            singleImageView = multiImageViewArray[0] as! FNPDShadowImageView
+            singleImageView.hidden = false
             singleImageView.image = cell.imageView.image
             UIView.animateWithDuration(0.5, animations: {
-                self.singleImageViewcontainer.frame =  CGRect.init(x: (self.frame.width - 50) / 2, y: self.frame.height - 44 - 55, width: 50, height: 50)
+                self.singleImageView.frame =  CGRect.init(x: (self.frame.width - 50) / 2, y: self.frame.height - 44 - 55, width: 50, height: 50)
             }) { (fff) in
                 let a = 1
             }
         }
         else {
+            singleImageView = multiImageViewArray[0] as! FNPDShadowImageView
             UIView.animateWithDuration(0.5, animations: {
-                self.singleImageViewcontainer.frame =  CGRect.init(x: (self.frame.width - 50) / 2, y: self.frame.height - 44, width: 50, height: 50)
+                self.singleImageView.frame =  CGRect.init(x: (self.frame.width - 50) / 2, y: self.frame.height - 44, width: 50, height: 50)
             }) { (fff) in
-                self.singleImageViewcontainer.hidden = true
+                self.singleImageView.hidden = true
             }
         }
         
         if selectedAssetArray.count >= 2 {
-            UIView.animateWithDuration(0.5, animations: { 
+            UIView.animateWithDuration(0.5, animations: {
+                self.scrollViewShadow.frame = CGRect.init(x: 0, y: 0, width: self.bounds.width, height: self.bounds.height - 44 - 60)
                 self.scrollView.frame = CGRect.init(x: 0, y: 0, width: self.bounds.width, height: self.bounds.height - 44 - 60)
+                self.singleImageView.transform = CGAffineTransformMakeScale(0.9, 0.9)
                 }, completion: { (fff) in
                     let i = 0
             })
         }
         else {
             UIView.animateWithDuration(0.5, animations: {
+                self.scrollViewShadow.frame = CGRect.init(x: 0, y: 60, width: self.bounds.width, height: self.bounds.height - 44 - 60)
                 self.scrollView.frame = CGRect.init(x: 0, y: 60, width: self.bounds.width, height: self.bounds.height - 44 - 60)
+                self.singleImageView.transform = CGAffineTransformMakeScale(1.0, 1.0)
+                self.singleImageView.imageView.frame = self.singleImageView.bounds //for after scale to 0.9, then scale to 1.0, the content will not recover to original state, this will fix that.
                 }, completion: { (fff) in
                     let i = 0
             })
