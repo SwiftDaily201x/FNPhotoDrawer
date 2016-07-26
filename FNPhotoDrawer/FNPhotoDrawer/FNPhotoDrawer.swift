@@ -15,7 +15,7 @@ class FNPhotoDrawer: UIView, UICollectionViewDataSource, UICollectionViewDelegat
     var photoArray:NSMutableArray! = []
     var collectionViewArray:NSMutableArray! = []
     let imageManager: PHCachingImageManager = PHCachingImageManager()
-    var albumNameBtn:UIButton!
+    var albumNameLabel:UILabel!
     var singleImageView:FNPDShadowImageView!
     var scrollView:UIScrollView!
     var scrollViewShadow:UIView!
@@ -49,10 +49,10 @@ class FNPhotoDrawer: UIView, UICollectionViewDataSource, UICollectionViewDelegat
         let cellWidth = 45
         flowLayout.itemSize = CGSize(width: cellWidth, height: cellWidth)
         selectedCollectionView = UICollectionView.init(frame: CGRect.init(x: 0, y: bounds.height - 44 - 60, width: bounds.width, height: 60), collectionViewLayout: flowLayout)
+        selectedCollectionView.backgroundColor = UIColor.whiteColor()
         selectedCollectionView.delegate = self
         selectedCollectionView.dataSource = self
         selectedCollectionView.registerClass(FNPDPhotoCell.self, forCellWithReuseIdentifier:"FNPDPhotoCell")
-        selectedCollectionView.backgroundColor = UIColor.clearColor()
         addSubview(selectedCollectionView)
         
         scrollViewShadow = UIView.init(frame: CGRect.init(x: 0, y: 60, width: bounds.width, height: bounds.height - 44 - 60))
@@ -64,9 +64,10 @@ class FNPhotoDrawer: UIView, UICollectionViewDataSource, UICollectionViewDelegat
         addSubview(scrollViewShadow)
         
         scrollView = UIScrollView.init(frame: CGRect.init(x: 0, y: 60, width: bounds.width, height: bounds.height - 44 - 60))
-        scrollView.contentSize = CGSize.init(width: bounds.width * CGFloat(albumArray.count), height: bounds.height)
+        scrollView.contentSize = CGSize.init(width: bounds.width * CGFloat(albumArray.count), height: scrollView.bounds.height)
         scrollView.delegate = self
         scrollView.pagingEnabled = true
+        scrollView.bounces = false
         addSubview(scrollView)
         for i in 0...albumArray.count - 1 {
             let flowLayout = UICollectionViewFlowLayout()
@@ -80,6 +81,8 @@ class FNPhotoDrawer: UIView, UICollectionViewDataSource, UICollectionViewDelegat
             collectionView.registerClass(FNPDPhotoCell.self, forCellWithReuseIdentifier:"FNPDPhotoCell")
             collectionView.tag = 100 + i
             collectionView.backgroundColor = UIColor.clearColor()
+            collectionView.bounces = false
+            collectionViewArray.addObject(collectionView)
             scrollView.addSubview(collectionView)
         }
         
@@ -95,13 +98,13 @@ class FNPhotoDrawer: UIView, UICollectionViewDataSource, UICollectionViewDelegat
         bgView.layer.shadowRadius = 4;
         addSubview(bgView)
         
-        albumNameBtn = UIButton.init(frame: CGRect.init(x: 0, y: frame.height - 44, width: frame.width / 3.0, height: 44))
+        albumNameLabel = UILabel.init(frame: CGRect.init(x: 12, y: frame.height - 44, width: frame.width / 3.0, height: 44))
         let collection:PHAssetCollection = albumArray[0] as! PHAssetCollection
-        albumNameBtn.setTitle(collection.localizedTitle!.uppercaseString, forState: .Normal)
-        albumNameBtn.setTitleColor(UIColor.init(red: 94 / 255.0, green: 99 / 255.0, blue: 106 / 255.0, alpha: 1), forState: .Normal)
-        albumNameBtn.titleLabel!.font = UIFont.init(name: "CourierNewPS-BoldMT", size: 17)
-        albumNameBtn.titleLabel?.adjustsFontSizeToFitWidth
-        addSubview(albumNameBtn)
+        albumNameLabel.text = collection.localizedTitle!.uppercaseString
+        albumNameLabel.textColor = UIColor.init(red: 94 / 255.0, green: 99 / 255.0, blue: 106 / 255.0, alpha: 1)
+        albumNameLabel.font = UIFont.init(name: "CourierNewPS-BoldMT", size: 17)
+        albumNameLabel.adjustsFontSizeToFitWidth = true
+        addSubview(albumNameLabel)
     }
     
     // MARK: UICollectionViewDataSource
@@ -134,7 +137,7 @@ class FNPhotoDrawer: UIView, UICollectionViewDataSource, UICollectionViewDelegat
                                               options: nil) { (image, info) -> Void in
                                                 if nil != image {
                                                     cell.loadData(image!)
-                                                    cell.loadSelectedState(self.selectedAssetArray.containsObject(asset))
+                                                    cell.loadSelectedState(self.selectedAssetArray.containsObject(asset), animation: false)
                                                 }
             }
             return cell
@@ -154,7 +157,7 @@ class FNPhotoDrawer: UIView, UICollectionViewDataSource, UICollectionViewDelegat
                                               options: nil) { (image, info) -> Void in
                                                 if nil != image {
                                                     cell.loadData(image!)
-                                                    cell.loadSelectedState(self.selectedAssetArray.containsObject(asset))
+                                                    cell.loadSelectedState(self.selectedAssetArray.containsObject(asset), animation: false)
                                                 }
             }
             return cell
@@ -163,7 +166,11 @@ class FNPhotoDrawer: UIView, UICollectionViewDataSource, UICollectionViewDelegat
     
     // MARK: UICollectionViewDelegate
     func collectionView(collectionView: UICollectionView, didSelectItemAtIndexPath indexPath: NSIndexPath) {
+        var isDelete = false
+        var theAsset = PHAsset.init()
         if collectionView.tag < 100 {
+            isDelete = true
+            theAsset = selectedAssetArray[indexPath.row] as! PHAsset
             selectedAssetArray.removeObjectAtIndex(indexPath.row)
             collectionView.reloadData()
         }
@@ -171,16 +178,29 @@ class FNPhotoDrawer: UIView, UICollectionViewDataSource, UICollectionViewDelegat
             let tag = collectionView.tag
             let fetchResult:PHFetchResult = photoArray[tag - 100] as! PHFetchResult
             let asset = fetchResult[indexPath.row] as! PHAsset
+            theAsset = asset
             let cell: FNPDPhotoCell = collectionView.cellForItemAtIndexPath(indexPath) as! FNPDPhotoCell
             if selectedAssetArray.containsObject(asset) {
                 let index = selectedAssetArray.indexOfObject(asset)
+                isDelete = true
                 selectedAssetArray.removeObject(asset)
                 selectedCollectionView.deleteItemsAtIndexPaths([NSIndexPath.init(forRow: index, inSection: 0)])
-                cell.loadSelectedState(false)
+                cell.loadSelectedState(false, animation: true)
             }
             else {
+                if selectedAssetArray.count >= 7 {
+                    let animation = CABasicAnimation(keyPath: "position")
+                    animation.duration = 0.07
+                    animation.repeatCount = 2
+                    animation.autoreverses = true
+                    animation.fromValue = NSValue(CGPoint: CGPointMake(selectedCollectionView.center.x - 5, selectedCollectionView.center.y))
+                    animation.toValue = NSValue(CGPoint: CGPointMake(selectedCollectionView.center.x + 5, selectedCollectionView.center.y))
+                    selectedCollectionView.layer.addAnimation(animation, forKey: "position")
+                    return
+                }
                 selectedAssetArray.addObject(asset)
-                cell.loadSelectedState(true)
+                cell.loadSelectedState(true, animation: true)
+                selectedCollectionView.insertItemsAtIndexPaths([NSIndexPath.init(forRow: selectedAssetArray.count - 1, inSection: 0)])
             }
             
             if selectedAssetArray.count == 1 {
@@ -228,7 +248,17 @@ class FNPhotoDrawer: UIView, UICollectionViewDataSource, UICollectionViewDelegat
                         print("")
                 })
             }
-            selectedCollectionView.reloadData()
+        }
+        for i in 0...photoArray.count - 1 {
+            let fetchResult:PHFetchResult = photoArray[i] as! PHFetchResult
+            let theCollectionView = collectionViewArray[i]
+            if fetchResult.containsObject(theAsset) {
+                let theIndex = fetchResult.indexOfObject(theAsset)
+                if theIndex < fetchResult.count {
+                    let theCell = theCollectionView.cellForItemAtIndexPath(NSIndexPath.init(forRow: theIndex, inSection: 0)) as? FNPDPhotoCell
+                    theCell?.loadSelectedState(!isDelete, animation: false)
+                }
+            }
         }
     }
     
@@ -248,8 +278,6 @@ class FNPhotoDrawer: UIView, UICollectionViewDataSource, UICollectionViewDelegat
     func scrollViewDidScroll(scrollView: UIScrollView) {
         let index = (scrollView.contentOffset.x + bounds.width / 2) / bounds.width
         let collection:PHAssetCollection = albumArray[Int(index)] as! PHAssetCollection
-        albumNameBtn.setTitle(collection.localizedTitle?.uppercaseString, forState: .Normal)
-        albumNameBtn.titleLabel!.font = UIFont.init(name: "CourierNewPS-BoldMT", size: 17)
-        albumNameBtn.titleLabel?.adjustsFontSizeToFitWidth
+        albumNameLabel.text = collection.localizedTitle!.uppercaseString
     }
 }
