@@ -175,7 +175,7 @@ class FNPhotoDrawer: UIView, UICollectionViewDataSource, UICollectionViewDelegat
             if selectedAssetArray.containsObject(asset) {
                 let index = selectedAssetArray.indexOfObject(asset)
                 selectedAssetArray.removeObject(asset)
-                collectionView.deleteItemsAtIndexPaths([NSIndexPath.init(forRow: index, inSection: 0)])
+                selectedCollectionView.deleteItemsAtIndexPaths([NSIndexPath.init(forRow: index, inSection: 0)])
                 cell.loadSelectedState(false)
             }
             else {
