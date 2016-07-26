@@ -17,10 +17,9 @@ class FNPhotoDrawer: UIView, UICollectionViewDataSource, UICollectionViewDelegat
     let imageManager: PHCachingImageManager = PHCachingImageManager()
     var albumNameBtn:UIButton!
     var singleImageView:FNPDShadowImageView!
-    var multiImageViewArray:NSMutableArray! = []
-    var storeImageViewArray:NSMutableArray! = []
     var scrollView:UIScrollView!
     var scrollViewShadow:UIView!
+    var selectedCollectionView:UICollectionView!
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -45,6 +44,17 @@ class FNPhotoDrawer: UIView, UICollectionViewDataSource, UICollectionViewDelegat
     }
     
     func initView(frame: CGRect) {
+        let flowLayout = UICollectionViewFlowLayout()
+        flowLayout.sectionInset = UIEdgeInsetsMake(7.5, 7.5, 7.5, 7.5)
+        let cellWidth = 45
+        flowLayout.itemSize = CGSize(width: cellWidth, height: cellWidth)
+        selectedCollectionView = UICollectionView.init(frame: CGRect.init(x: 0, y: bounds.height - 44 - 60, width: bounds.width, height: 60), collectionViewLayout: flowLayout)
+        selectedCollectionView.delegate = self
+        selectedCollectionView.dataSource = self
+        selectedCollectionView.registerClass(FNPDPhotoCell.self, forCellWithReuseIdentifier:"FNPDPhotoCell")
+        selectedCollectionView.backgroundColor = UIColor.clearColor()
+        addSubview(selectedCollectionView)
+        
         scrollViewShadow = UIView.init(frame: CGRect.init(x: 0, y: 60, width: bounds.width, height: bounds.height - 44 - 60))
         scrollViewShadow.backgroundColor = UIColor.init(white: 1.0, alpha: 1)
         scrollViewShadow.layer.shadowColor = UIColor.init(white: 0.7, alpha: 0.5).CGColor
@@ -73,12 +83,9 @@ class FNPhotoDrawer: UIView, UICollectionViewDataSource, UICollectionViewDelegat
             scrollView.addSubview(collectionView)
         }
         
-        for _ in 0...6 {
-            let imageView = FNPDShadowImageView.init(frame: CGRect.init(x: (frame.width - 50) / 2, y: frame.height - 44, width: 50, height: 50))
-            addSubview(imageView)
-            imageView.hidden = true
-            storeImageViewArray.addObject(imageView)
-        }
+        singleImageView = FNPDShadowImageView.init(frame: CGRect.init(x: (frame.width - 50) / 2, y: frame.height - 44, width: 50, height: 50))
+        addSubview(singleImageView)
+        singleImageView.hidden = true
         
         let bgView = UIView.init(frame: CGRect.init(x: 0, y: frame.height - 44, width: frame.width, height: 44))
         bgView.backgroundColor = UIColor.init(white: 1.0, alpha: 1.0)
@@ -103,89 +110,125 @@ class FNPhotoDrawer: UIView, UICollectionViewDataSource, UICollectionViewDelegat
     }
     
     func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        let tag = collectionView.tag
-        let fetchResult:PHFetchResult = photoArray[tag - 100] as! PHFetchResult
-        return fetchResult.count
+        if collectionView.tag < 100 {
+            return selectedAssetArray.count
+        }
+        else {
+            let tag = collectionView.tag
+            let fetchResult:PHFetchResult = photoArray[tag - 100] as! PHFetchResult
+            return fetchResult.count
+        }
     }
     
     func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
-        let cell: FNPDPhotoCell = collectionView.dequeueReusableCellWithReuseIdentifier("FNPDPhotoCell", forIndexPath: indexPath) as! FNPDPhotoCell
-        cell.contentView.backgroundColor = UIColor.lightGrayColor()
-        
-        let tag = collectionView.tag
-        let fetchResult:PHFetchResult = photoArray[tag - 100] as! PHFetchResult
-        let asset = fetchResult[indexPath.row] as! PHAsset
-        let cellSize = (collectionView.collectionViewLayout as! UICollectionViewFlowLayout).itemSize
-        let targetSize = CGSize.init(width: cellSize.width * UIScreen.mainScreen().scale, height: cellSize.height * UIScreen.mainScreen().scale)
-        imageManager.requestImageForAsset(asset,
-                                          targetSize: targetSize,
-                                          contentMode: .AspectFill,
-                                          options: nil) { (image, info) -> Void in
-                                            if nil != image {
-                                                cell.loadData(image!)
-                                                cell.loadSelectedState(self.selectedAssetArray.containsObject(asset))
-                                            }
+        if collectionView.tag < 100 {
+            let cell: FNPDPhotoCell = collectionView.dequeueReusableCellWithReuseIdentifier("FNPDPhotoCell", forIndexPath: indexPath) as! FNPDPhotoCell
+            cell.contentView.backgroundColor = UIColor.lightGrayColor()
+            
+            let asset = selectedAssetArray[indexPath.row] as! PHAsset
+            let cellSize = (collectionView.collectionViewLayout as! UICollectionViewFlowLayout).itemSize
+            let targetSize = CGSize.init(width: cellSize.width * UIScreen.mainScreen().scale, height: cellSize.height * UIScreen.mainScreen().scale)
+            imageManager.requestImageForAsset(asset,
+                                              targetSize: targetSize,
+                                              contentMode: .AspectFill,
+                                              options: nil) { (image, info) -> Void in
+                                                if nil != image {
+                                                    cell.loadData(image!)
+                                                    cell.loadSelectedState(self.selectedAssetArray.containsObject(asset))
+                                                }
+            }
+            return cell
         }
-        return cell
+        else {
+            let cell: FNPDPhotoCell = collectionView.dequeueReusableCellWithReuseIdentifier("FNPDPhotoCell", forIndexPath: indexPath) as! FNPDPhotoCell
+            cell.contentView.backgroundColor = UIColor.lightGrayColor()
+            
+            let tag = collectionView.tag
+            let fetchResult:PHFetchResult = photoArray[tag - 100] as! PHFetchResult
+            let asset = fetchResult[indexPath.row] as! PHAsset
+            let cellSize = (collectionView.collectionViewLayout as! UICollectionViewFlowLayout).itemSize
+            let targetSize = CGSize.init(width: cellSize.width * UIScreen.mainScreen().scale, height: cellSize.height * UIScreen.mainScreen().scale)
+            imageManager.requestImageForAsset(asset,
+                                              targetSize: targetSize,
+                                              contentMode: .AspectFill,
+                                              options: nil) { (image, info) -> Void in
+                                                if nil != image {
+                                                    cell.loadData(image!)
+                                                    cell.loadSelectedState(self.selectedAssetArray.containsObject(asset))
+                                                }
+            }
+            return cell
+        }
     }
     
     // MARK: UICollectionViewDelegate
     func collectionView(collectionView: UICollectionView, didSelectItemAtIndexPath indexPath: NSIndexPath) {
-        let tag = collectionView.tag
-        let fetchResult:PHFetchResult = photoArray[tag - 100] as! PHFetchResult
-        let asset = fetchResult[indexPath.row] as! PHAsset
-        let cell: FNPDPhotoCell = collectionView.cellForItemAtIndexPath(indexPath) as! FNPDPhotoCell
-        if selectedAssetArray.containsObject(asset) {
-            let index = selectedAssetArray.indexOfObject(asset)
-            storeImageViewArray.addObject(multiImageViewArray[index])
-            multiImageViewArray.removeObjectAtIndex(0)
-            selectedAssetArray.removeObject(asset)
-            cell.loadSelectedState(false)
+        if collectionView.tag < 100 {
+            selectedAssetArray.removeObjectAtIndex(indexPath.row)
+            collectionView.reloadData()
         }
         else {
-            multiImageViewArray.addObject(storeImageViewArray[0])
-            storeImageViewArray.removeObjectAtIndex(0)
-            selectedAssetArray.addObject(asset)
-            cell.loadSelectedState(true)
-        }
-        
-        if selectedAssetArray.count >= 1 {
-            singleImageView = multiImageViewArray[0] as! FNPDShadowImageView
-            singleImageView.hidden = false
-            singleImageView.image = cell.imageView.image
-            UIView.animateWithDuration(0.5, animations: {
-                self.singleImageView.frame =  CGRect.init(x: (self.frame.width - 50) / 2, y: self.frame.height - 44 - 55, width: 50, height: 50)
-            }) { (fff) in
-                let a = 1
+            let tag = collectionView.tag
+            let fetchResult:PHFetchResult = photoArray[tag - 100] as! PHFetchResult
+            let asset = fetchResult[indexPath.row] as! PHAsset
+            let cell: FNPDPhotoCell = collectionView.cellForItemAtIndexPath(indexPath) as! FNPDPhotoCell
+            if selectedAssetArray.containsObject(asset) {
+                let index = selectedAssetArray.indexOfObject(asset)
+                selectedAssetArray.removeObject(asset)
+                collectionView.deleteItemsAtIndexPaths([NSIndexPath.init(forRow: index, inSection: 0)])
+                cell.loadSelectedState(false)
             }
-        }
-        else {
-            singleImageView = multiImageViewArray[0] as! FNPDShadowImageView
-            UIView.animateWithDuration(0.5, animations: {
-                self.singleImageView.frame =  CGRect.init(x: (self.frame.width - 50) / 2, y: self.frame.height - 44, width: 50, height: 50)
-            }) { (fff) in
-                self.singleImageView.hidden = true
+            else {
+                selectedAssetArray.addObject(asset)
+                cell.loadSelectedState(true)
             }
-        }
-        
-        if selectedAssetArray.count >= 2 {
-            UIView.animateWithDuration(0.5, animations: {
-                self.scrollViewShadow.frame = CGRect.init(x: 0, y: 0, width: self.bounds.width, height: self.bounds.height - 44 - 60)
-                self.scrollView.frame = CGRect.init(x: 0, y: 0, width: self.bounds.width, height: self.bounds.height - 44 - 60)
-                self.singleImageView.transform = CGAffineTransformMakeScale(0.9, 0.9)
-                }, completion: { (fff) in
-                    let i = 0
-            })
-        }
-        else {
-            UIView.animateWithDuration(0.5, animations: {
-                self.scrollViewShadow.frame = CGRect.init(x: 0, y: 60, width: self.bounds.width, height: self.bounds.height - 44 - 60)
-                self.scrollView.frame = CGRect.init(x: 0, y: 60, width: self.bounds.width, height: self.bounds.height - 44 - 60)
-                self.singleImageView.transform = CGAffineTransformMakeScale(1.0, 1.0)
-                self.singleImageView.imageView.frame = self.singleImageView.bounds //for after scale to 0.9, then scale to 1.0, the content will not recover to original state, this will fix that.
-                }, completion: { (fff) in
-                    let i = 0
-            })
+            
+            if selectedAssetArray.count == 1 {
+                singleImageView.hidden = false
+                let cellSize = (collectionView.collectionViewLayout as! UICollectionViewFlowLayout).itemSize
+                let targetSize = CGSize.init(width: cellSize.width * UIScreen.mainScreen().scale, height: cellSize.height * UIScreen.mainScreen().scale)
+                imageManager.requestImageForAsset((selectedAssetArray[0] as! PHAsset),
+                                                  targetSize: targetSize,
+                                                  contentMode: .AspectFill,
+                                                  options: nil) { (image, info) -> Void in
+                                                    if nil != image {
+                                                        self.singleImageView.image = image
+                                                    }
+                }
+                UIView.animateWithDuration(0.5, animations: {
+                    self.singleImageView.frame =  CGRect.init(x: (self.frame.width - 50) / 2, y: self.frame.height - 44 - 55, width: 50, height: 50)
+                }) { (fff) in
+                    print("")
+                }
+            }
+            else {
+                UIView.animateWithDuration(0.5, animations: {
+                    self.singleImageView.frame =  CGRect.init(x: (self.frame.width - 50) / 2, y: self.frame.height - 44, width: 50, height: 50)
+                }) { (fff) in
+                    self.singleImageView.hidden = true
+                }
+            }
+            
+            if selectedAssetArray.count >= 2 {
+                UIView.animateWithDuration(0.5, animations: {
+                    self.scrollViewShadow.frame = CGRect.init(x: 0, y: 0, width: self.bounds.width, height: self.bounds.height - 44 - 60)
+                    self.scrollView.frame = CGRect.init(x: 0, y: 0, width: self.bounds.width, height: self.bounds.height - 44 - 60)
+                    self.singleImageView.transform = CGAffineTransformMakeScale(0.9, 0.9)
+                    }, completion: { (fff) in
+                        print("")
+                })
+            }
+            else {
+                UIView.animateWithDuration(0.5, animations: {
+                    self.scrollViewShadow.frame = CGRect.init(x: 0, y: 60, width: self.bounds.width, height: self.bounds.height - 44 - 60)
+                    self.scrollView.frame = CGRect.init(x: 0, y: 60, width: self.bounds.width, height: self.bounds.height - 44 - 60)
+                    self.singleImageView.transform = CGAffineTransformMakeScale(1.0, 1.0)
+                    self.singleImageView.imageView.frame = self.singleImageView.bounds //for after scale to 0.9, then scale to 1.0, the content will not recover to original state, this will fix that.
+                    }, completion: { (fff) in
+                        print("")
+                })
+            }
+            selectedCollectionView.reloadData()
         }
     }
     
