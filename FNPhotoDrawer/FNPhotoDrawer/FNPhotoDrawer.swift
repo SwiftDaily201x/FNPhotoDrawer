@@ -105,6 +105,12 @@ class FNPhotoDrawer: UIView, UICollectionViewDataSource, UICollectionViewDelegat
         albumNameLabel.font = UIFont.init(name: "CourierNewPS-BoldMT", size: 17)
         albumNameLabel.adjustsFontSizeToFitWidth = true
         addSubview(albumNameLabel)
+        
+        let okBtn = UIButton.init(frame: CGRect.init(x: frame.width - frame.width / 3.0 + 30, y: frame.height - 44, width: frame.width / 3.0, height: 44))
+        okBtn.setTitle("OK", forState: .Normal)
+        okBtn.setTitleColor(UIColor.init(red: 94 / 255.0, green: 99 / 255.0, blue: 106 / 255.0, alpha: 1), forState: .Normal)
+        okBtn.titleLabel?.font = UIFont.init(name: "CourierNewPS-BoldMT", size: 17)
+        addSubview(okBtn)
     }
     
     // MARK: UICollectionViewDataSource
@@ -172,7 +178,7 @@ class FNPhotoDrawer: UIView, UICollectionViewDataSource, UICollectionViewDelegat
             isDelete = true
             theAsset = selectedAssetArray[indexPath.row] as! PHAsset
             selectedAssetArray.removeObjectAtIndex(indexPath.row)
-            collectionView.reloadData()
+            selectedCollectionView.deleteItemsAtIndexPaths([indexPath])
         }
         else {
             let tag = collectionView.tag
@@ -202,52 +208,51 @@ class FNPhotoDrawer: UIView, UICollectionViewDataSource, UICollectionViewDelegat
                 cell.loadSelectedState(true, animation: true)
                 selectedCollectionView.insertItemsAtIndexPaths([NSIndexPath.init(forRow: selectedAssetArray.count - 1, inSection: 0)])
             }
-            
-            if selectedAssetArray.count == 1 {
-                singleImageView.hidden = false
-                let cellSize = (collectionView.collectionViewLayout as! UICollectionViewFlowLayout).itemSize
-                let targetSize = CGSize.init(width: cellSize.width * UIScreen.mainScreen().scale, height: cellSize.height * UIScreen.mainScreen().scale)
-                imageManager.requestImageForAsset((selectedAssetArray[0] as! PHAsset),
-                                                  targetSize: targetSize,
-                                                  contentMode: .AspectFill,
-                                                  options: nil) { (image, info) -> Void in
-                                                    if nil != image {
-                                                        self.singleImageView.image = image
-                                                    }
-                }
-                UIView.animateWithDuration(0.5, animations: {
-                    self.singleImageView.frame =  CGRect.init(x: (self.frame.width - 50) / 2, y: self.frame.height - 44 - 55, width: 50, height: 50)
-                }) { (fff) in
+        }
+        if selectedAssetArray.count == 1 {
+            singleImageView.hidden = false
+            let cellSize = (collectionView.collectionViewLayout as! UICollectionViewFlowLayout).itemSize
+            let targetSize = CGSize.init(width: cellSize.width * UIScreen.mainScreen().scale, height: cellSize.height * UIScreen.mainScreen().scale)
+            imageManager.requestImageForAsset((selectedAssetArray[0] as! PHAsset),
+                                              targetSize: targetSize,
+                                              contentMode: .AspectFill,
+                                              options: nil) { (image, info) -> Void in
+                                                if nil != image {
+                                                    self.singleImageView.image = image
+                                                }
+            }
+            UIView.animateWithDuration(0.5, animations: {
+                self.singleImageView.frame =  CGRect.init(x: (self.frame.width - 50) / 2, y: self.frame.height - 44 - 55, width: 50, height: 50)
+            }) { (fff) in
+                print("")
+            }
+        }
+        else {
+            UIView.animateWithDuration(0.5, animations: {
+                self.singleImageView.frame =  CGRect.init(x: (self.frame.width - 50) / 2, y: self.frame.height - 44, width: 50, height: 50)
+            }) { (fff) in
+                self.singleImageView.hidden = true
+            }
+        }
+        
+        if selectedAssetArray.count >= 2 {
+            UIView.animateWithDuration(0.5, animations: {
+                self.scrollViewShadow.frame = CGRect.init(x: 0, y: 0, width: self.bounds.width, height: self.bounds.height - 44 - 60)
+                self.scrollView.frame = CGRect.init(x: 0, y: 0, width: self.bounds.width, height: self.bounds.height - 44 - 60)
+                self.singleImageView.transform = CGAffineTransformMakeScale(0.9, 0.9)
+                }, completion: { (fff) in
                     print("")
-                }
-            }
-            else {
-                UIView.animateWithDuration(0.5, animations: {
-                    self.singleImageView.frame =  CGRect.init(x: (self.frame.width - 50) / 2, y: self.frame.height - 44, width: 50, height: 50)
-                }) { (fff) in
-                    self.singleImageView.hidden = true
-                }
-            }
-            
-            if selectedAssetArray.count >= 2 {
-                UIView.animateWithDuration(0.5, animations: {
-                    self.scrollViewShadow.frame = CGRect.init(x: 0, y: 0, width: self.bounds.width, height: self.bounds.height - 44 - 60)
-                    self.scrollView.frame = CGRect.init(x: 0, y: 0, width: self.bounds.width, height: self.bounds.height - 44 - 60)
-                    self.singleImageView.transform = CGAffineTransformMakeScale(0.9, 0.9)
-                    }, completion: { (fff) in
-                        print("")
-                })
-            }
-            else {
-                UIView.animateWithDuration(0.5, animations: {
-                    self.scrollViewShadow.frame = CGRect.init(x: 0, y: 60, width: self.bounds.width, height: self.bounds.height - 44 - 60)
-                    self.scrollView.frame = CGRect.init(x: 0, y: 60, width: self.bounds.width, height: self.bounds.height - 44 - 60)
-                    self.singleImageView.transform = CGAffineTransformMakeScale(1.0, 1.0)
-                    self.singleImageView.imageView.frame = self.singleImageView.bounds //for after scale to 0.9, then scale to 1.0, the content will not recover to original state, this will fix that.
-                    }, completion: { (fff) in
-                        print("")
-                })
-            }
+            })
+        }
+        else {
+            UIView.animateWithDuration(0.5, animations: {
+                self.scrollViewShadow.frame = CGRect.init(x: 0, y: 60, width: self.bounds.width, height: self.bounds.height - 44 - 60)
+                self.scrollView.frame = CGRect.init(x: 0, y: 60, width: self.bounds.width, height: self.bounds.height - 44 - 60)
+                self.singleImageView.transform = CGAffineTransformMakeScale(1.0, 1.0)
+                self.singleImageView.imageView.frame = self.singleImageView.bounds //for after scale to 0.9, then scale to 1.0, the content will not recover to original state, this will fix that.
+                }, completion: { (fff) in
+                    print("")
+            })
         }
         for i in 0...photoArray.count - 1 {
             let fetchResult:PHFetchResult = photoArray[i] as! PHFetchResult
