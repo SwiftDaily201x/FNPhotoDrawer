@@ -15,10 +15,10 @@ class FNPDPhotoFetcher: NSObject {
         let smartAlbums = PHAssetCollection.fetchAssetCollectionsWithType(.SmartAlbum, subtype: .Any, options: nil)
         let userAlbums = PHAssetCollection.fetchAssetCollectionsWithType(.Album, subtype: .Any, options: nil)
         let assetCollectionSubtypes:[PHAssetCollectionSubtype] = [.SmartAlbumUserLibrary,
-                                   .SmartAlbumFavorites,
-                                   .AlbumMyPhotoStream,
-                                   .AlbumCloudShared,
-                                   .AlbumRegular]
+                                                                  .SmartAlbumFavorites,
+                                                                  .AlbumMyPhotoStream,
+                                                                  .AlbumCloudShared,
+                                                                  .AlbumRegular]
         smartAlbums.enumerateObjectsUsingBlock { [unowned self](assetCollection, index, stop) -> Void in
             guard let assetCollection = assetCollection as? PHAssetCollection else { return }
             if assetCollectionSubtypes.contains(assetCollection.assetCollectionSubtype) {
