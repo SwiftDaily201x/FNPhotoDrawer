@@ -14,6 +14,7 @@
 		1010DD011D3D1DE8003D2719 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 1010DCFF1D3D1DE8003D2719 /* LaunchScreen.storyboard */; };
 		1010DD0A1D3D1F38003D2719 /* FNPDPhotoFetcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1010DD091D3D1F38003D2719 /* FNPDPhotoFetcher.swift */; };
 		1010DD0C1D3D3146003D2719 /* FNPhotoDrawer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1010DD0B1D3D3146003D2719 /* FNPhotoDrawer.swift */; };
+		102E3C5F1D7484FB002E8611 /* FNPDPhotoQuire.swift in Sources */ = {isa = PBXBuildFile; fileRef = 102E3C5E1D7484FB002E8611 /* FNPDPhotoQuire.swift */; };
 		1072E18A1D40AD47009B1302 /* FNPDShadowImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1072E1891D40AD47009B1302 /* FNPDShadowImageView.swift */; };
 		10E65F881D3DE8D9003922EF /* FNPDPhotoCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 10E65F871D3DE8D9003922EF /* FNPDPhotoCell.swift */; };
 /* End PBXBuildFile section */
@@ -28,6 +29,7 @@
 		1010DD021D3D1DE8003D2719 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		1010DD091D3D1F38003D2719 /* FNPDPhotoFetcher.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FNPDPhotoFetcher.swift; sourceTree = "<group>"; };
 		1010DD0B1D3D3146003D2719 /* FNPhotoDrawer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FNPhotoDrawer.swift; sourceTree = "<group>"; };
+		102E3C5E1D7484FB002E8611 /* FNPDPhotoQuire.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FNPDPhotoQuire.swift; sourceTree = "<group>"; };
 		1072E1891D40AD47009B1302 /* FNPDShadowImageView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FNPDShadowImageView.swift; sourceTree = "<group>"; };
 		10E65F871D3DE8D9003922EF /* FNPDPhotoCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FNPDPhotoCell.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -80,6 +82,7 @@
 				10E65F871D3DE8D9003922EF /* FNPDPhotoCell.swift */,
 				1010DD0B1D3D3146003D2719 /* FNPhotoDrawer.swift */,
 				1072E1891D40AD47009B1302 /* FNPDShadowImageView.swift */,
+				102E3C5E1D7484FB002E8611 /* FNPDPhotoQuire.swift */,
 			);
 			path = FNPhotoDrawer;
 			sourceTree = "<group>";
@@ -158,6 +161,7 @@
 				1010DCF91D3D1DE8003D2719 /* ViewController.swift in Sources */,
 				1010DD0C1D3D3146003D2719 /* FNPhotoDrawer.swift in Sources */,
 				1072E18A1D40AD47009B1302 /* FNPDShadowImageView.swift in Sources */,
+				102E3C5F1D7484FB002E8611 /* FNPDPhotoQuire.swift in Sources */,
 				10E65F881D3DE8D9003922EF /* FNPDPhotoCell.swift in Sources */,
 				1010DCF71D3D1DE8003D2719 /* AppDelegate.swift in Sources */,
 				1010DD0A1D3D1F38003D2719 /* FNPDPhotoFetcher.swift in Sources */,

@@ -11,7 +11,7 @@ import Photos
 
 class FNPhotoDrawer: UIView, UICollectionViewDataSource, UICollectionViewDelegate, UIScrollViewDelegate {
     var selectedAssetArray:NSMutableArray! = []
-    var albumArray:NSArray! = []
+    var albumArray:NSMutableArray! = []
     var photoArray:NSMutableArray! = []
     var collectionViewArray:NSMutableArray! = []
     let imageManager: PHCachingImageManager = PHCachingImageManager()
@@ -20,6 +20,7 @@ class FNPhotoDrawer: UIView, UICollectionViewDataSource, UICollectionViewDelegat
     var scrollView:UIScrollView!
     var scrollViewShadow:UIView!
     var selectedCollectionView:UICollectionView!
+    var resultAnimationView:FNPDPhotoQuire!
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -32,7 +33,17 @@ class FNPhotoDrawer: UIView, UICollectionViewDataSource, UICollectionViewDelegat
     }
     
     func initData() {
-        albumArray = FNPDPhotoFetcher.init().fetchAlbum()
+        albumArray = FNPDPhotoFetcher.init().fetchAlbum().mutableCopy() as! NSMutableArray
+        for album in albumArray.copy() as! NSArray {
+            let fetchOptions = PHFetchOptions()
+            fetchOptions.sortDescriptors = [NSSortDescriptor(key: "creationDate", ascending: true)]
+            fetchOptions.predicate = NSPredicate(format: "mediaType == %ld", PHAssetMediaType.Image.rawValue)
+            
+            let assetsFetchResults = PHAsset.fetchAssetsInAssetCollection(album as! PHAssetCollection, options: fetchOptions)
+            if assetsFetchResults.count == 0 {
+                albumArray.removeObject(album)
+            }
+        }
         for album in albumArray {
             let fetchOptions = PHFetchOptions()
             fetchOptions.sortDescriptors = [NSSortDescriptor(key: "creationDate", ascending: true)]
@@ -44,6 +55,10 @@ class FNPhotoDrawer: UIView, UICollectionViewDataSource, UICollectionViewDelegat
     }
     
     func initView(frame: CGRect) {
+        resultAnimationView = FNPDPhotoQuire.init(frame: CGRect.init(x: (frame.width - 60) * 0.5, y: 0, width: 60, height: 60))
+        resultAnimationView.hidden = true
+        addSubview(resultAnimationView)
+        
         let flowLayout = UICollectionViewFlowLayout()
         flowLayout.sectionInset = UIEdgeInsetsMake(7.5, 7.5, 7.5, 7.5)
         let cellWidth = 45
@@ -110,8 +125,44 @@ class FNPhotoDrawer: UIView, UICollectionViewDataSource, UICollectionViewDelegat
         okBtn.setTitle("OK", forState: .Normal)
         okBtn.setTitleColor(UIColor.init(red: 94 / 255.0, green: 99 / 255.0, blue: 106 / 255.0, alpha: 1), forState: .Normal)
         okBtn.titleLabel?.font = UIFont.init(name: "CourierNewPS-BoldMT", size: 17)
+        okBtn.addTarget(self, action: #selector(okBtnClicked), forControlEvents: .TouchUpInside)
         addSubview(okBtn)
     }
+    
+    func okBtnClicked() {
+        resultAnimationView.hidden = false
+        if selectedAssetArray.count == 0 {
+            dismiss()
+        }
+        else if selectedAssetArray.count == 1 {
+            
+        }
+        else {
+            let asset = selectedAssetArray[0] as! PHAsset
+            let targetSize = CGSize.init(width: 60 * UIScreen.mainScreen().scale, height: 60 * UIScreen.mainScreen().scale)
+            imageManager.requestImageForAsset(asset,
+                                              targetSize: targetSize,
+                                              contentMode: .AspectFill,
+                                              options: nil) { (image, info) -> Void in
+                                                if nil != image {
+                                                    self.resultAnimationView.firstImage = image
+                                                }
+            }
+            resultAnimationView.imageNum = selectedAssetArray.count
+            UIView.animateWithDuration(0.5, animations: { 
+                self.resultAnimationView.frame = CGRect.init(x: self.resultAnimationView.frame.minX, y: -7.5, width: self.resultAnimationView.frame.width, height: self.resultAnimationView.frame.height)
+                self.scrollViewShadow.frame = CGRect.init(x: 0, y: 60, width: self.bounds.width, height: self.bounds.height - 44 - 60)
+                self.scrollView.frame = CGRect.init(x: 0, y: 60, width: self.bounds.width, height: self.bounds.height - 44 - 60)
+                }, completion: { (fff) in
+                    let i = 2
+            })
+        }
+    }
+    
+    func dismiss() {
+        
+    }
+    
     
     // MARK: UICollectionViewDataSource
     func numberOfSectionsInCollectionView(collectionView: UICollectionView) -> Int {
