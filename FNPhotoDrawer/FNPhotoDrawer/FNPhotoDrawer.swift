@@ -154,7 +154,7 @@ class FNPhotoDrawer: UIView, UICollectionViewDataSource, UICollectionViewDelegat
                 self.scrollViewShadow.frame = CGRect.init(x: 0, y: 60, width: self.bounds.width, height: self.bounds.height - 44 - 60)
                 self.scrollView.frame = CGRect.init(x: 0, y: 60, width: self.bounds.width, height: self.bounds.height - 44 - 60)
                 }, completion: { (fff) in
-                    let i = 2
+                    self.resultAnimationView.fold()
             })
         }
     }

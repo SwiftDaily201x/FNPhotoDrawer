@@ -17,6 +17,7 @@
 		102E3C5F1D7484FB002E8611 /* FNPDPhotoQuire.swift in Sources */ = {isa = PBXBuildFile; fileRef = 102E3C5E1D7484FB002E8611 /* FNPDPhotoQuire.swift */; };
 		1072E18A1D40AD47009B1302 /* FNPDShadowImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1072E1891D40AD47009B1302 /* FNPDShadowImageView.swift */; };
 		10E65F881D3DE8D9003922EF /* FNPDPhotoCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 10E65F871D3DE8D9003922EF /* FNPDPhotoCell.swift */; };
+		10EA3F511D757A3100812C8B /* FNPDImageHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 10EA3F501D757A3100812C8B /* FNPDImageHandler.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -32,6 +33,7 @@
 		102E3C5E1D7484FB002E8611 /* FNPDPhotoQuire.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FNPDPhotoQuire.swift; sourceTree = "<group>"; };
 		1072E1891D40AD47009B1302 /* FNPDShadowImageView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FNPDShadowImageView.swift; sourceTree = "<group>"; };
 		10E65F871D3DE8D9003922EF /* FNPDPhotoCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FNPDPhotoCell.swift; sourceTree = "<group>"; };
+		10EA3F501D757A3100812C8B /* FNPDImageHandler.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FNPDImageHandler.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -83,6 +85,7 @@
 				1010DD0B1D3D3146003D2719 /* FNPhotoDrawer.swift */,
 				1072E1891D40AD47009B1302 /* FNPDShadowImageView.swift */,
 				102E3C5E1D7484FB002E8611 /* FNPDPhotoQuire.swift */,
+				10EA3F501D757A3100812C8B /* FNPDImageHandler.swift */,
 			);
 			path = FNPhotoDrawer;
 			sourceTree = "<group>";
@@ -160,6 +163,7 @@
 			files = (
 				1010DCF91D3D1DE8003D2719 /* ViewController.swift in Sources */,
 				1010DD0C1D3D3146003D2719 /* FNPhotoDrawer.swift in Sources */,
+				10EA3F511D757A3100812C8B /* FNPDImageHandler.swift in Sources */,
 				1072E18A1D40AD47009B1302 /* FNPDShadowImageView.swift in Sources */,
 				102E3C5F1D7484FB002E8611 /* FNPDPhotoQuire.swift in Sources */,
 				10E65F881D3DE8D9003922EF /* FNPDPhotoCell.swift in Sources */,

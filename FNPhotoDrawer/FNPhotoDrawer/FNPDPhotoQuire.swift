@@ -13,7 +13,11 @@ class FNPDPhotoQuire: UIView {
     var firstImageView:UIImageView!
     var firstImage:UIImage! {
         didSet {
-            firstImageView.image = firstImage
+            firstImageView.image = FNPDImageHandler.reSizeImage(firstImage, reSize: CGSize.init(width: frame.height, height: frame.height))
+            var transform = CATransform3DIdentity
+            transform.m34 = 1.0 / 500.0
+            transform = CATransform3DRotate(transform, 1, 0, 1, 0)
+            firstImageView.layer.transform = transform
         }
     }
     
@@ -37,7 +41,7 @@ class FNPDPhotoQuire: UIView {
             let oriCenter = center
             frame = CGRect.init(x: 0, y: 0, width: frame.height + 8.0 * CGFloat(imageNum - 1), height: frame.height)
             center = oriCenter
-            
+            bringSubviewToFront(firstImageView)
         }
     }
     
@@ -52,6 +56,24 @@ class FNPDPhotoQuire: UIView {
     
     func initView(frame: CGRect) {
         firstImageView = UIImageView.init(frame: CGRect.init(x: 0, y: 0, width: frame.width, height: frame.height))
+        firstImageView.contentMode = .Center
         addSubview(firstImageView)
+    }
+    
+    func fold() {
+        UIView.animateWithDuration(0.5, animations: { 
+            self.firstImageView.center = CGPoint.init(x: self.bounds.width * 0.5, y: self.bounds.height * 0.5)
+            
+            var transform = CATransform3DIdentity
+            transform = CATransform3DRotate(transform, 0, 0, 0, 0)
+            self.firstImageView.layer.transform = transform
+            for line in self.rightLines {
+                (line as! UIView).center = CGPoint.init(x: self.bounds.width * 0.5 + 30, y: self.bounds.height * 0.5)
+                (line as! UIView).alpha = 0
+            }
+            }) { (fff) in
+                let i = 0
+        }
+        
     }
 }
