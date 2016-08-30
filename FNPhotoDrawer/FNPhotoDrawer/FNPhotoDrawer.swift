@@ -21,6 +21,7 @@ class FNPhotoDrawer: UIView, UICollectionViewDataSource, UICollectionViewDelegat
     var scrollViewShadow:UIView!
     var selectedCollectionView:UICollectionView!
     var resultAnimationView:FNPDPhotoQuire!
+    var resultRect:CGRect! = CGRectZero
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -155,6 +156,11 @@ class FNPhotoDrawer: UIView, UICollectionViewDataSource, UICollectionViewDelegat
                 self.scrollView.frame = CGRect.init(x: 0, y: 60, width: self.bounds.width, height: self.bounds.height - 44 - 60)
                 }, completion: { (fff) in
                     self.resultAnimationView.fold()
+                    UIView.animateWithDuration(0.5, delay: 0.5, options: .CurveEaseInOut, animations: { 
+                        self.resultAnimationView.frame = CGRect.init(x: self.resultRect.origin.x - (self.resultAnimationView.frame.width - self.resultAnimationView.frame.height) * 0.5 * (1.0 * self.resultRect.size.height / self.resultAnimationView.frame.height), y: self.resultRect.origin.y, width: self.resultRect.width, height: self.resultRect.height)
+                        }, completion: { (fff) in
+                            let i = 0
+                    })
             })
         }
     }
