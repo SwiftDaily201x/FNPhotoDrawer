@@ -151,11 +151,8 @@ class FNPhotoDrawer: UIView, UICollectionViewDataSource, UICollectionViewDelegat
         
         UIView.animateWithDuration(0.7, delay: 0, options: .CurveEaseIn, animations: { 
             self.frame = self.commonSelfRect
-            }, completion: nil)
-        
-        UIView.animateWithDuration(0.5) { 
             vc.view.backgroundColor = UIColor.init(white: 1, alpha: 0.4)
-        }
+            }, completion: nil)
         
         resultAnimationView = FNPDPhotoQuire.init(frame: CGRect.init(x: (frame.width - 60) * 0.5, y: self.frame.minY, width: 60, height: 60))
         resultAnimationView.hidden = true
@@ -200,15 +197,15 @@ class FNPhotoDrawer: UIView, UICollectionViewDataSource, UICollectionViewDelegat
     }
     
     func dismiss() {
-        UIView.animateWithDuration(0.5, animations: {
+        UIView.animateWithDuration(0.7, delay: 0, options: .CurveEaseOut, animations: { 
             self.resultAnimationView.alpha = 0
             self.newWindow.rootViewController?.view.backgroundColor = UIColor.clearColor()
             self.frame = CGRect.init(x: 0, y: (UIApplication.sharedApplication().keyWindow?.bounds.height)!, width: self.frame.width, height: self.frame.height)
-            }, completion: { (fff) in
+            }) { (fff) in
                 self.resultAnimationView.removeFromSuperview()
                 self.newWindow.resignKeyWindow()
                 self.newWindow = nil
-        })
+        }
     }
     
     
