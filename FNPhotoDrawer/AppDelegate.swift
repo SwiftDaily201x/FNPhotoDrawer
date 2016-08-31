@@ -20,6 +20,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         self.window!.makeKeyAndVisible()
         let rootViewController = ViewController()
         self.window!.rootViewController = rootViewController
+        UIApplication.sharedApplication().statusBarHidden = true
         return true
     }
 

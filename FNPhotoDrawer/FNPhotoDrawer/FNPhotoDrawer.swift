@@ -22,6 +22,12 @@ class FNPhotoDrawer: UIView, UICollectionViewDataSource, UICollectionViewDelegat
     var selectedCollectionView:UICollectionView!
     var resultAnimationView:FNPDPhotoQuire!
     var resultRect:CGRect! = CGRectZero
+    var newWindow:UIWindow!
+    
+    class func initPD() -> FNPhotoDrawer {
+        let pd = FNPhotoDrawer.init(frame: CGRectMake(0, (UIApplication.sharedApplication().keyWindow?.bounds.height)! - 440, (UIApplication.sharedApplication().keyWindow?.bounds.width)!, 440))
+        return pd
+    }
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -127,7 +133,21 @@ class FNPhotoDrawer: UIView, UICollectionViewDataSource, UICollectionViewDelegat
         okBtn.setTitleColor(UIColor.init(red: 94 / 255.0, green: 99 / 255.0, blue: 106 / 255.0, alpha: 1), forState: .Normal)
         okBtn.titleLabel?.font = UIFont.init(name: "CourierNewPS-BoldMT", size: 17)
         okBtn.addTarget(self, action: #selector(okBtnClicked), forControlEvents: .TouchUpInside)
-        addSubview(okBtn)
+        addSubview(okBtn)        
+    }
+    
+    func biong() {
+        self.newWindow = UIWindow.init(frame: (UIApplication.sharedApplication().keyWindow?.bounds)!)
+        self.newWindow.windowLevel = UIWindowLevelStatusBar + 1
+        let vc = UIViewController.init()
+        vc.view.backgroundColor = UIColor.clearColor()
+        self.newWindow.rootViewController = vc
+        self.newWindow.makeKeyAndVisible()
+        vc.view.addSubview(self)
+        
+        UIView.animateWithDuration(0.5) { 
+            vc.view.backgroundColor = UIColor.init(white: 1, alpha: 0.4)
+        }
     }
     
     func okBtnClicked() {
