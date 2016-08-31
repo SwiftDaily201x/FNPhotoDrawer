@@ -22,6 +22,7 @@ class FNPhotoDrawer: UIView, UICollectionViewDataSource, UICollectionViewDelegat
     var selectedCollectionView:UICollectionView!
     var resultAnimationView:FNPDPhotoQuire!
     var resultRect:CGRect! = CGRectZero
+    var commonSelfRect:CGRect! = CGRectZero
     var newWindow:UIWindow!
     
     class func initPD() -> FNPhotoDrawer {
@@ -30,7 +31,8 @@ class FNPhotoDrawer: UIView, UICollectionViewDataSource, UICollectionViewDelegat
     }
     
     override init(frame: CGRect) {
-        super.init(frame: frame)
+        commonSelfRect = frame
+        super.init(frame: CGRect.init(x: 0, y: (UIApplication.sharedApplication().keyWindow?.bounds.height)!, width: frame.width, height: frame.height))
         initData()
         initView(frame)
     }
@@ -62,10 +64,6 @@ class FNPhotoDrawer: UIView, UICollectionViewDataSource, UICollectionViewDelegat
     }
     
     func initView(frame: CGRect) {
-        resultAnimationView = FNPDPhotoQuire.init(frame: CGRect.init(x: (frame.width - 60) * 0.5, y: 0, width: 60, height: 60))
-        resultAnimationView.hidden = true
-        addSubview(resultAnimationView)
-        
         let flowLayout = UICollectionViewFlowLayout()
         flowLayout.sectionInset = UIEdgeInsetsMake(7.5, 7.5, 7.5, 7.5)
         let cellWidth = 45
@@ -143,11 +141,25 @@ class FNPhotoDrawer: UIView, UICollectionViewDataSource, UICollectionViewDelegat
         vc.view.backgroundColor = UIColor.clearColor()
         self.newWindow.rootViewController = vc
         self.newWindow.makeKeyAndVisible()
+        
+        let tapView = UIView.init(frame: vc.view.bounds)
+        let tapInMask = UITapGestureRecognizer.init(target: self, action: #selector(dismiss))
+        tapView.addGestureRecognizer(tapInMask)
+        vc.view.addSubview(tapView)
+        
         vc.view.addSubview(self)
+        
+        UIView.animateWithDuration(0.7, delay: 0, options: .CurveEaseIn, animations: { 
+            self.frame = self.commonSelfRect
+            }, completion: nil)
         
         UIView.animateWithDuration(0.5) { 
             vc.view.backgroundColor = UIColor.init(white: 1, alpha: 0.4)
         }
+        
+        resultAnimationView = FNPDPhotoQuire.init(frame: CGRect.init(x: (frame.width - 60) * 0.5, y: self.frame.minY, width: 60, height: 60))
+        resultAnimationView.hidden = true
+        newWindow.rootViewController?.view.addSubview(resultAnimationView)
     }
     
     func okBtnClicked() {
@@ -171,22 +183,32 @@ class FNPhotoDrawer: UIView, UICollectionViewDataSource, UICollectionViewDelegat
             }
             resultAnimationView.imageNum = selectedAssetArray.count
             UIView.animateWithDuration(0.5, animations: { 
-                self.resultAnimationView.frame = CGRect.init(x: self.resultAnimationView.frame.minX, y: -7.5, width: self.resultAnimationView.frame.width, height: self.resultAnimationView.frame.height)
+                self.resultAnimationView.frame = CGRect.init(x: self.resultAnimationView.frame.minX, y: self.frame.minY - 7.5, width: self.resultAnimationView.frame.width, height: self.resultAnimationView.frame.height)
                 self.scrollViewShadow.frame = CGRect.init(x: 0, y: 60, width: self.bounds.width, height: self.bounds.height - 44 - 60)
                 self.scrollView.frame = CGRect.init(x: 0, y: 60, width: self.bounds.width, height: self.bounds.height - 44 - 60)
                 }, completion: { (fff) in
                     self.resultAnimationView.fold()
-                    UIView.animateWithDuration(0.5, delay: 0.5, options: .CurveEaseInOut, animations: { 
-                        self.resultAnimationView.frame = CGRect.init(x: self.resultRect.origin.x - (self.resultAnimationView.frame.width - self.resultAnimationView.frame.height) * 0.5 * (1.0 * self.resultRect.size.height / self.resultAnimationView.frame.height), y: self.resultRect.origin.y, width: self.resultRect.width, height: self.resultRect.height)
+                    UIView.animateWithDuration(0.5, delay: 0, options: .CurveEaseInOut, animations: {
+                        let scale = self.resultRect.width / self.resultAnimationView.frame.height
+                        self.resultAnimationView.transform = CGAffineTransformMakeScale(scale, scale)
+                        self.resultAnimationView.center = CGPoint.init(x: self.resultRect.midX, y: self.resultRect.midY)
                         }, completion: { (fff) in
-                            let i = 0
+                            self.dismiss()
                     })
             })
         }
     }
     
     func dismiss() {
-        
+        UIView.animateWithDuration(0.5, animations: {
+            self.resultAnimationView.alpha = 0
+            self.newWindow.rootViewController?.view.backgroundColor = UIColor.clearColor()
+            self.frame = CGRect.init(x: 0, y: (UIApplication.sharedApplication().keyWindow?.bounds.height)!, width: self.frame.width, height: self.frame.height)
+            }, completion: { (fff) in
+                self.resultAnimationView.removeFromSuperview()
+                self.newWindow.resignKeyWindow()
+                self.newWindow = nil
+        })
     }
     
     

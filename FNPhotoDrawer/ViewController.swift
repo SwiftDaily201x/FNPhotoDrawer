@@ -16,9 +16,17 @@ class ViewController: UIViewController {
         
         let imageView = UIImageView.init(frame: view.bounds)
         imageView.image = UIImage.init(named: "sreenshot0")
+        imageView.userInteractionEnabled = true
         view.addSubview(imageView)
         
+        let tap = UITapGestureRecognizer.init()
+        tap.addTarget(self, action: #selector(tapped))
+        imageView.addGestureRecognizer(tap)
+    }
+    
+    func tapped() {
         let photoDrawer = FNPhotoDrawer.initPD()
+        photoDrawer.resultRect = CGRect.init(x: 275, y: 87, width: 64, height: 64)
         photoDrawer.biong()
     }
     
