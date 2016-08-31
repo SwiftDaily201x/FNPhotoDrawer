@@ -57,6 +57,9 @@ class FNPDPhotoQuire: UIView {
     func initView(frame: CGRect) {
         firstImageView = UIImageView.init(frame: CGRect.init(x: 0, y: 0, width: frame.width, height: frame.height))
         firstImageView.contentMode = .Center
+        firstImageView.layer.masksToBounds = true
+        firstImageView.layer.borderColor = UIColor.init(red: 195 / 255.0, green: 222 / 255.0, blue: 234 / 255.0, alpha: 1).CGColor
+        firstImageView.layer.borderWidth = 4
         addSubview(firstImageView)
     }
     
