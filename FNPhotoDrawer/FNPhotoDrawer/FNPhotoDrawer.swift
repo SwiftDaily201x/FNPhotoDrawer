@@ -147,27 +147,24 @@ class FNPhotoDrawer: UIView, UICollectionViewDataSource, UICollectionViewDelegat
         tapView.addGestureRecognizer(tapInMask)
         vc.view.addSubview(tapView)
         
+        resultAnimationView = FNPDPhotoQuire.init(frame: CGRect.init(x: (frame.width - 60) * 0.5, y: self.frame.minY, width: 60, height: 60))
+        resultAnimationView.hidden = true
+        newWindow.rootViewController?.view.addSubview(resultAnimationView)
+        
         vc.view.addSubview(self)
         
         UIView.animateWithDuration(0.7, delay: 0, options: .CurveEaseIn, animations: { 
             self.frame = self.commonSelfRect
             vc.view.backgroundColor = UIColor.init(white: 1, alpha: 0.4)
             }, completion: nil)
-        
-        resultAnimationView = FNPDPhotoQuire.init(frame: CGRect.init(x: (frame.width - 60) * 0.5, y: self.frame.minY, width: 60, height: 60))
-        resultAnimationView.hidden = true
-        newWindow.rootViewController?.view.addSubview(resultAnimationView)
     }
     
     func okBtnClicked() {
-        resultAnimationView.hidden = false
         if selectedAssetArray.count == 0 {
             dismiss()
         }
-        else if selectedAssetArray.count == 1 {
-            
-        }
         else {
+            resultAnimationView.hidden = false
             let asset = selectedAssetArray[0] as! PHAsset
             let targetSize = CGSize.init(width: 60 * UIScreen.mainScreen().scale, height: 60 * UIScreen.mainScreen().scale)
             imageManager.requestImageForAsset(asset,
@@ -181,8 +178,14 @@ class FNPhotoDrawer: UIView, UICollectionViewDataSource, UICollectionViewDelegat
             resultAnimationView.imageNum = selectedAssetArray.count
             UIView.animateWithDuration(0.5, animations: { 
                 self.resultAnimationView.frame = CGRect.init(x: self.resultAnimationView.frame.minX, y: self.frame.minY - 7.5, width: self.resultAnimationView.frame.width, height: self.resultAnimationView.frame.height)
-                self.scrollViewShadow.frame = CGRect.init(x: 0, y: 60, width: self.bounds.width, height: self.bounds.height - 44 - 60)
-                self.scrollView.frame = CGRect.init(x: 0, y: 60, width: self.bounds.width, height: self.bounds.height - 44 - 60)
+                
+                if self.selectedAssetArray.count == 1 {
+                    self.singleImageView.frame =  CGRect.init(x: (self.frame.width - 50) / 2, y: self.frame.height - 44, width: 50, height: 50)
+                }
+                else {
+                    self.scrollViewShadow.frame = CGRect.init(x: 0, y: 60, width: self.bounds.width, height: self.bounds.height - 44 - 60)
+                    self.scrollView.frame = CGRect.init(x: 0, y: 60, width: self.bounds.width, height: self.bounds.height - 44 - 60)
+                }
                 }, completion: { (fff) in
                     self.resultAnimationView.fold()
                     UIView.animateWithDuration(0.5, delay: 0, options: .CurveEaseInOut, animations: {
