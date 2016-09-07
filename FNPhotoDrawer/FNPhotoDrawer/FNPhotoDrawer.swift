@@ -32,7 +32,7 @@ class FNPhotoDrawer: UIView, UICollectionViewDataSource, UICollectionViewDelegat
     
     override init(frame: CGRect) {
         commonSelfRect = frame
-        super.init(frame: CGRect.init(x: 0, y: (UIApplication.sharedApplication().keyWindow?.bounds.height)!, width: frame.width, height: frame.height))
+        super.init(frame: frame)
         initData()
         initView(frame)
     }
@@ -152,9 +152,9 @@ class FNPhotoDrawer: UIView, UICollectionViewDataSource, UICollectionViewDelegat
         newWindow.rootViewController?.view.addSubview(resultAnimationView)
         
         vc.view.addSubview(self)
-        
+        self.alpha = 0
         UIView.animateWithDuration(0.7, delay: 0, options: .CurveEaseIn, animations: { 
-            self.frame = self.commonSelfRect
+            self.alpha = 1
             vc.view.backgroundColor = UIColor.init(white: 1, alpha: 0.4)
             }, completion: nil)
     }
@@ -178,7 +178,7 @@ class FNPhotoDrawer: UIView, UICollectionViewDataSource, UICollectionViewDelegat
             resultAnimationView.imageNum = selectedAssetArray.count
             UIView.animateWithDuration(0.5, animations: { 
                 self.resultAnimationView.frame = CGRect.init(x: self.resultAnimationView.frame.minX, y: self.frame.minY - 7.5, width: self.resultAnimationView.frame.width, height: self.resultAnimationView.frame.height)
-                
+                self.alpha = 0
                 if self.selectedAssetArray.count == 1 {
                     self.singleImageView.frame =  CGRect.init(x: (self.frame.width - 50) / 2, y: self.frame.height - 44, width: 50, height: 50)
                 }
@@ -200,10 +200,10 @@ class FNPhotoDrawer: UIView, UICollectionViewDataSource, UICollectionViewDelegat
     }
     
     func dismiss() {
-        UIView.animateWithDuration(0.7, delay: 0, options: .CurveEaseOut, animations: { 
+        UIView.animateWithDuration(0.7, delay: 0, options: .CurveEaseOut, animations: {
+            self.alpha = 0
             self.resultAnimationView.alpha = 0
             self.newWindow.rootViewController?.view.backgroundColor = UIColor.clearColor()
-            self.frame = CGRect.init(x: 0, y: (UIApplication.sharedApplication().keyWindow?.bounds.height)!, width: self.frame.width, height: self.frame.height)
             }) { (fff) in
                 self.resultAnimationView.removeFromSuperview()
                 self.newWindow.resignKeyWindow()
